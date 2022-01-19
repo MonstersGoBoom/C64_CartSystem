@@ -4,8 +4,9 @@
 
 //Initialise cart
 #define MAGICDESK	//Valid values D64, MAGICDESK, GMOD2, EASYFLASH
-.var CART_ZP_START = $f0 //10 bytes min
-.var CART_COPY_BASE = $0340	//$e0 bytes
+.var CART_ZP_DEST = $f0 
+.var CART_ZP_START = CART_ZP_DEST+2 //10 bytes min
+.var CART_COPY_BASE = $0300	//$e0 bytes
 .var CART_MAX_FILES = 256 	//256 maximum
 .var KRILL_INSTALL_METHOD = $10dd //D64 only, Found in loadersymbols-c64.inc
 #import "cartloader/cartLoader.asm"
@@ -29,9 +30,15 @@ BOOT:
 		lda #$35
 		sta $01
 		cli
-
+		sta $d020 
+		sta $d021
 		//Load by name
 		LOADER_LoadFile("DEMO") 
+
+		lda #$05 
+		sta CART_ZP_DEST+1 
+
+		LOADER_LoadFile("SOMEDATA") 
 
 		//Load by fat index (useful for level loading)
 		lda #MyFatIndexHere
@@ -80,6 +87,8 @@ __DEMO:
 
 SOMEDATA:
 	.encoding "screencode_upper"
+	.text "HELLO WORLD"
+	.text "HELLO WORLD"
 	.text "HELLO WORLD"
 __SOMEDATA:
 

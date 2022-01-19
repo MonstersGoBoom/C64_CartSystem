@@ -343,7 +343,13 @@
 				ora #$80
 				sta FAT_DATA + 1
 
-
+				lda CART_ZP_DEST+1 
+				bne useOverloadAddress
+				lda FAT_DATA+5 
+				sta CART_ZP_DEST
+				lda FAT_DATA+6 
+				sta CART_ZP_DEST+1
+useOverloadAddress:
 
 				ldy #$00
 				// jmp !Skip+
@@ -357,12 +363,12 @@
 				ldx #$30	//Bank out everything for copy
 				stx $01
 				//Dest
-				sta (FAT_DATA + 5), y
+				sta (CART_ZP_DEST), y
 
 				//Inc Dest
-				inc FAT_DATA + 5
+				inc CART_ZP_DEST
 				bne !+
-				inc FAT_DATA + 6
+				inc CART_ZP_DEST + 1
 			!:
 
 				//Inc Source
@@ -399,6 +405,10 @@
 				lda #$35			//Bank out cartr, kernal and basic $a000-$bfff & $e000-$ffff
 				sta $01 
 				
+				lda #$00
+				sta CART_ZP_DEST
+				sta CART_ZP_DEST+1
+				
 				bit $dc0d			//Ack CIA interrupts
 				bit $dd0d
 				plp					//Reenable Interrupts and return
@@ -427,6 +437,9 @@
 		
 
 				lda #$00
+				sta CART_ZP_DEST
+				sta CART_ZP_DEST+1
+
 				:LoadBank()
 				lda #$37
 				sta $01
