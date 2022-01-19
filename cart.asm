@@ -34,7 +34,7 @@ BOOT:
 		sta $d021
 		//Load by name
 		LOADER_LoadFile("DEMO") 
-
+		// LOAD to $0500 instead of stored address
 		lda #$05 
 		sta CART_ZP_DEST+1 
 
